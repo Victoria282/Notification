@@ -1,103 +1,65 @@
 package ru.unit6.course.android.retrofit.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import ru.unit6.course.android.retrofit.R
-import ru.unit6.course.android.retrofit.data.model.User
-import ru.unit6.course.android.retrofit.data.model.UserDB
-import ru.unit6.course.android.retrofit.utils.Status
+import ru.unit6.course.android.retrofit.ui.userdetails.UserDetailsFragment
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(R.layout.main_fragment) {
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
+    private val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+    private val mainAdapter: MainAdapter by lazy { MainAdapter(arrayListOf()) }
+    private val recyclerView: RecyclerView by lazy { requireView().findViewById(R.id.recyclerView) }
 
-    private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: MainAdapter
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var progressBar: ProgressBar
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = inflater.inflate(R.layout.main_fragment, container, false)
-
-        view.apply {
-            recyclerView = findViewById(R.id.recyclerView)
-            progressBar = findViewById(R.id.progressBar)
+    private val userCLickListener by lazy {
+        MainAdapter.UserCLickListener { id ->
+            val userFragment = UserDetailsFragment()
+            val bundle = Bundle()
+            bundle.putString(UserDetailsFragment.USER_ID, id)
+            userFragment.arguments = bundle
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.container, userFragment, UserDetailsFragment.TAG).addToBackStack("").commit()
         }
-
-        return view
-
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupUI()
         setupObservers()
+
+        //todo
+//        runBlocking {
+//            delay(7000)
+//        }
     }
 
     private fun setupUI() {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = MainAdapter(arrayListOf())
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                recyclerView.context,
-                (recyclerView.layoutManager as LinearLayoutManager).orientation
+        mainAdapter.userCLickListener = userCLickListener
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(
+                DividerItemDecoration(
+                    recyclerView.context,
+                    (recyclerView.layoutManager as LinearLayoutManager).orientation
+                )
             )
-        )
-        recyclerView.adapter = adapter
+            adapter = mainAdapter
+        }
     }
 
     private fun setupObservers() {
-        viewModel.getUsers().observe(viewLifecycleOwner) { resource ->
-            when (resource.status) {
-                Status.SUCCESS -> {
-                    recyclerView.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    resource.data?.let { users ->
-                        adapter.addUsers(users)
-                        viewModel.setAllUsersToDatabase(
-                            users = users.map { user ->
-                                UserDB(
-                                    id = user.id,
-                                    name = user.name,
-                                    avatar = user.avatar,
-                                    email = user.email,
-                                )
-                            }
-                        )
-                    }
-                }
-                Status.ERROR -> {
-                    recyclerView.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(context, resource.message, Toast.LENGTH_LONG).show()
-                }
-                Status.LOADING -> {
-                    progressBar.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }
-            }
-        }
-
-        viewModel.localUsers.observe(viewLifecycleOwner) {
-            it
+        viewModel.users.observe(viewLifecycleOwner) { users ->
+            users ?: return@observe
+            mainAdapter.addUsers(users)
         }
     }
 }

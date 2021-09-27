@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import ru.unit6.course.android.retrofit.data.model.UserDB
+import ru.unit6.course.android.retrofit.data.model.User
 
-@Database(entities = [UserDB::class], version = 1)
+@Database(entities = [User::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun userDao() : UserDao

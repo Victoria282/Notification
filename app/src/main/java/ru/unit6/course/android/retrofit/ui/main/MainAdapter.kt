@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.unit6.course.android.retrofit.R
@@ -12,19 +13,26 @@ import ru.unit6.course.android.retrofit.data.model.User
 
 class MainAdapter(private val users: ArrayList<User>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
-    class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var userCLickListener: UserCLickListener? = null
+
+    inner class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(user: User) {
             itemView.apply {
                 val textViewUserName = this.findViewById<TextView>(R.id.textViewUserName)
                 val textViewUserEmail = this.findViewById<TextView>(R.id.textViewUserEmail)
                 val imageViewAvatar = this.findViewById<ImageView>(R.id.imageViewAvatar)
+                val container = this.findViewById<ConstraintLayout>(R.id.layout)
 
                 textViewUserName.text = user.name
                 textViewUserEmail.text = user.email
                 Glide.with(imageViewAvatar.context)
                     .load(user.avatar)
                     .into(imageViewAvatar)
+
+                container.setOnClickListener {
+                    userCLickListener?.onClick(user.id)
+                }
             }
         }
     }
@@ -42,6 +50,11 @@ class MainAdapter(private val users: ArrayList<User>) : RecyclerView.Adapter<Mai
         this.users.apply {
             clear()
             addAll(users)
+            notifyDataSetChanged()
         }
+    }
+
+    fun interface UserCLickListener {
+        fun onClick(id: String)
     }
 }
