@@ -15,10 +15,10 @@ class MainRepository(
 
     suspend fun getUsers(): List<User>? = withContext(Dispatchers.IO) {
         val apiResult = apiHelper.getUsers()
-        userDao?.insertAllUsers(apiResult)
 
+        userDao?.insertAllUsers(apiResult)
         userDao?.getAllUsers()
     }
 
-    suspend fun getUser(id: String): User? = withContext(Dispatchers.IO) { userDao?.getUser(id) }
+    suspend fun getUser(id: String): User? = apiHelper.getUser(id)
 }

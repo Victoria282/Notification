@@ -18,15 +18,11 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private val mainAdapter: MainAdapter by lazy { MainAdapter(arrayListOf()) }
 
-    //TODO
+    // Переход через навграф
     private val userCLickListener by lazy {
         MainAdapter.UserCLickListener { id ->
-            val userFragment = UserDetailsFragment()
-            val bundle = Bundle()
-            bundle.putString(UserDetailsFragment.USER_ID, id)
-            userFragment.arguments = bundle
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.navHost, userFragment, UserDetailsFragment.TAG).addToBackStack("").commit()
+            val action = MainFragmentDirections.toUserDetailsFragment(id)
+            findNavController().navigate(action)
         }
     }
 
@@ -35,11 +31,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
         setupUI()
         setupObservers()
-
-        //todo
-//        runBlocking {
-//            delay(7000)
-//        }
     }
 
     private fun setupUI() {

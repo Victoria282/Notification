@@ -17,11 +17,15 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/userName"
+        android:gravity="center"
+        android:textStyle="bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_marginTop="80dp"
         android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toTopOf="@+id/userId"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/userAvatar"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,24 +33,51 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/userId"
-        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userAvatar" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/userEmail"
-        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:textColor="@color/black"
+        android:textColor="#232323"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userId" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Поделиться"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userEmail"
+        app:layout_constraintVertical_bias="0.383" />
+
+    <Button
+        android:id="@+id/addNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Отправить уведомление"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintVertical_bias="0.289" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
